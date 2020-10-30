@@ -53,9 +53,11 @@ namespace VignereDeciphering
         {
 
             double _;
+            int __;
             return GetOptimalCharacterMapping(textCharProportion,
                 targetCharProportion,
-                out _);
+                out _,
+                out __);
 
         }
 
@@ -118,13 +120,15 @@ namespace VignereDeciphering
 
         public static Dictionary<char, char> GetOptimalCharacterMapping(Dictionary<char, double> textCharProportion,
             Dictionary<char, double> targetCharProportion,
-            out double mappingDifference)
+            out double mappingDifference,
+            out int mappingShiftAmount)
         {
 
             /*Mappings are { inputTextChar : actualChar }*/
 
             double minDifference = double.MaxValue;
             Dictionary<char, char> optimalMapping = null;
+            int optimalShiftAmount = 0;
 
             for (int i = 0; i < 26; i++)
             {
@@ -153,6 +157,7 @@ namespace VignereDeciphering
 
                     minDifference = difference;
                     optimalMapping = new Dictionary<char, char>(mapping);
+                    optimalShiftAmount = i;
 
                 }
 
@@ -160,6 +165,7 @@ namespace VignereDeciphering
 
 
             mappingDifference = minDifference;
+            mappingShiftAmount = optimalShiftAmount;
             return optimalMapping;
 
         }

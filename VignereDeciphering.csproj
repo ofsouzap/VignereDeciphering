@@ -46,6 +46,7 @@
     <Compile Include="EnglishLetterFrequency.cs" />
     <Compile Include="FrequencyAnalysis.cs" />
     <Compile Include="KeyLengthDeduction.cs" />
+    <Compile Include="ManualMappingDeciphering.cs" />
     <Compile Include="ProgramMath.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

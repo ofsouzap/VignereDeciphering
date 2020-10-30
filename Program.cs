@@ -11,6 +11,8 @@ namespace VignereDeciphering
     class Program
     {
 
+        //TODO: allow for spaces in text to be shown with output
+
         /*Character mapping Dictionary format: { inputTextChar : charThatItIsMappedTo (a.k.a. outputChar/decipheredChar) }*/
 
         public static readonly char[] validCharacters = new char[]
@@ -54,7 +56,7 @@ namespace VignereDeciphering
 
 #if debug
 
-            DebugTextSplitAndReconstruct();
+            DebugManualMappingDeciphering();
 
 #endif
 
@@ -106,26 +108,42 @@ namespace VignereDeciphering
 
             int keyLengthSelection = KeyLengthSelection(text);
 
-            string[] offsetTextSelections = FrequencyAnalysis.SplitTextByOffset(text, keyLengthSelection);
+            Console.Write("Automatically decipher text (0/1)?> ");
+            bool autoDecipher = int.Parse(Console.ReadLine()) != 0;
 
-            string[] decipheredStrings = new string[offsetTextSelections.Length];
-
-            for (int i = 0; i < decipheredStrings.Length; i++)
+            if (autoDecipher)
             {
 
-                string selection = offsetTextSelections[i];
+                string[] offsetTextSelections = FrequencyAnalysis.SplitTextByOffset(text, keyLengthSelection);
 
-                Dictionary<char, double> selectionProportions = FrequencyAnalysis.CharFrequencyToCharProportion(FrequencyAnalysis.GetTextCharFrequency(selection));
-                Dictionary<char, char> optimalMapping = FrequencyAnalysis.GetOptimalCharacterMapping(selectionProportions, EnglishLetterFrequency.GetLetterProportions());
+                string[] decipheredStrings = new string[offsetTextSelections.Length];
 
-                decipheredStrings[i] = FrequencyAnalysis.DecipherTextByMapping(selection, optimalMapping);
+                for (int i = 0; i < decipheredStrings.Length; i++)
+                {
+
+                    string selection = offsetTextSelections[i];
+
+                    Dictionary<char, double> selectionProportions = FrequencyAnalysis.CharFrequencyToCharProportion(FrequencyAnalysis.GetTextCharFrequency(selection));
+                    Dictionary<char, char> optimalMapping = FrequencyAnalysis.GetOptimalCharacterMapping(selectionProportions, EnglishLetterFrequency.GetLetterProportions());
+
+                    decipheredStrings[i] = FrequencyAnalysis.DecipherTextByMapping(selection, optimalMapping);
+
+                }
+
+                string fullDeciphering = FrequencyAnalysis.ReconstructTextFromOffsetSelections(decipheredStrings);
+
+                Console.WriteLine("Deciphered Text:");
+                Console.WriteLine(fullDeciphering);
+
+            }
+            else
+            {
+
+                ManualMappingDeciphering.RunDeciphering(text, keyLengthSelection);
 
             }
 
-            string fullDeciphering = FrequencyAnalysis.ReconstructTextFromOffsetSelections(decipheredStrings);
-
-            Console.WriteLine("Deciphered Text:");
-            Console.WriteLine(fullDeciphering);
+            //TODO: return encryption keyword
 
         }
 
@@ -615,9 +633,11 @@ namespace VignereDeciphering
             Dictionary<char, double> englishCharacterProportions = EnglishLetterFrequency.GetLetterProportions();
 
             double mappingDifference;
+            int _;
             Dictionary<char, char> optimalMapping = FrequencyAnalysis.GetOptimalCharacterMapping(selectionCharacterProportion,
                 englishCharacterProportions,
-                out mappingDifference);
+                out mappingDifference,
+                out _);
 
             Console.WriteLine();
             Console.WriteLine($"Mapping Difference: {mappingDifference}");
@@ -666,6 +686,30 @@ namespace VignereDeciphering
                 Console.WriteLine($"{sample} -> {InputIsCharacterRemapping(sample)}");
 
             }
+
+        }
+
+        static void DebugManualMappingDeciphering()
+        {
+
+            Console.Write("Text> ");
+            string text;
+
+            string input = Console.ReadLine().ToUpper().Replace(" ", "").ToUpper();
+
+            if (input[0] == '\\')
+            {
+                text = GetTextFromFile(input.Substring(1)).ToUpper();
+            }
+            else
+            {
+                text = input;
+            }
+
+            Console.Write("Key Length> ");
+            int keyLength = int.Parse(Console.ReadLine());
+
+            ManualMappingDeciphering.RunDeciphering(text, keyLength);
 
         }
 

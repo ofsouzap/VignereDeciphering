@@ -31,7 +31,9 @@ namespace VignereDeciphering
             ConsoleColor.DarkYellow
         };
 
-        public static string RunDeciphering(string originalText, int keyLength)
+        public static string RunDeciphering(string originalText,
+            int keyLength,
+            out string keyword)
         {
 
             //TODO: allow for keyLength bigger than seperateKeyColors.Length
@@ -69,6 +71,8 @@ namespace VignereDeciphering
             bool running = true;
             while (running)
             {
+
+                Console.WriteLine("Current Keyword: " + ProgramMath.GetKeywordFromOffsets(selectionShifts));
 
                 Console.WriteLine("Current Text:");
                 PrintColoredTextByKey(ConstructCurrentDeciphering(originalSelections, selectionShifts),
@@ -128,6 +132,7 @@ namespace VignereDeciphering
 
             }
 
+            keyword = ProgramMath.GetKeywordFromOffsets(selectionShifts);
             return ConstructCurrentDeciphering(originalSelections, selectionShifts);
 
         }

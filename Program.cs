@@ -117,14 +117,19 @@ namespace VignereDeciphering
                 string[] offsetTextSelections = FrequencyAnalysis.SplitTextByOffset(text, keyLengthSelection);
 
                 string[] decipheredStrings = new string[offsetTextSelections.Length];
+                int[] shiftAmounts = new int[offsetTextSelections.Length];
 
                 for (int i = 0; i < decipheredStrings.Length; i++)
                 {
 
                     string selection = offsetTextSelections[i];
 
+                    double _;
                     Dictionary<char, double> selectionProportions = FrequencyAnalysis.CharFrequencyToCharProportion(FrequencyAnalysis.GetTextCharFrequency(selection));
-                    Dictionary<char, char> optimalMapping = FrequencyAnalysis.GetOptimalCharacterMapping(selectionProportions, EnglishLetterFrequency.GetLetterProportions());
+                    Dictionary<char, char> optimalMapping = FrequencyAnalysis.GetOptimalCharacterMapping(selectionProportions,
+                        EnglishLetterFrequency.GetLetterProportions(),
+                        out _,
+                        out shiftAmounts[i]);
 
                     decipheredStrings[i] = FrequencyAnalysis.DecipherTextByMapping(selection, optimalMapping);
 
@@ -132,6 +137,7 @@ namespace VignereDeciphering
 
                 string fullDeciphering = FrequencyAnalysis.ReconstructTextFromOffsetSelections(decipheredStrings);
 
+                Console.WriteLine("Keyword: " + ProgramMath.GetKeywordFromOffsets(shiftAmounts));
                 Console.WriteLine("Deciphered Text:");
                 Console.WriteLine(fullDeciphering);
 
@@ -139,11 +145,16 @@ namespace VignereDeciphering
             else
             {
 
-                ManualMappingDeciphering.RunDeciphering(text, keyLengthSelection);
+                string keyword;
+                string fullDeciphering = ManualMappingDeciphering.RunDeciphering(text,
+                    keyLengthSelection,
+                    out keyword);
+
+                Console.WriteLine("Keyword: " + keyword);
+                Console.WriteLine("Deciphered Text:");
+                Console.WriteLine(fullDeciphering);
 
             }
-
-            //TODO: return encryption keyword
 
         }
 

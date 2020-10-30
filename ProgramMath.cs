@@ -191,5 +191,27 @@ namespace VignereDeciphering
 
         }
 
+        public static string GetKeywordFromOffsets(int[] offsets)
+        {
+
+            string output = "";
+
+            foreach (int offset in offsets)
+            {
+
+                int tableRow = (26 - offset) % 26;
+
+                /*validCharacters is used because the cipher could theoretically use another character or less but then should still have the encryption table based around the characters used*/
+
+                char keychar = Program.validCharacters[tableRow];
+
+                output = output + keychar;
+
+            }
+
+            return output;
+
+        }
+
     }
 }

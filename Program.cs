@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.IO;
 
 namespace VignereDeciphering
 {
@@ -79,7 +80,18 @@ namespace VignereDeciphering
         {
 
             Console.Write("Text> ");
-            string text = Console.ReadLine().ToUpper();
+            string text;
+
+            string input = Console.ReadLine().ToUpper().Replace(" ", "").ToUpper();
+
+            if (input[0] == '\\')
+            {
+                text = GetTextFromFile(input.Substring(1)).ToUpper();
+            }
+            else
+            {
+                text = input;
+            }
 
             foreach (char c in text)
             {
@@ -115,6 +127,12 @@ namespace VignereDeciphering
             Console.WriteLine("Deciphered Text:");
             Console.WriteLine(fullDeciphering);
 
+        }
+
+        static string GetTextFromFile(string filename)
+        {
+            Debug.Assert(File.Exists(filename));
+            return File.ReadAllText(filename);
         }
 
         static int KeyLengthSelection(string text)

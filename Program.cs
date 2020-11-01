@@ -11,6 +11,14 @@ namespace VignereDeciphering
     class Program
     {
 
+        public enum CipherType
+        {
+            Default,
+            Custom
+        }
+
+        public static CipherType cipherType = CipherType.Default;
+
         //TODO: allow for spaces in text to be shown with output
 
         /*Character mapping Dictionary format: { inputTextChar : charThatItIsMappedTo (a.k.a. outputChar/decipheredChar) }*/
@@ -56,7 +64,7 @@ namespace VignereDeciphering
 
 #if debug
 
-            DebugManualMappingDeciphering();
+            DebugCustomAlphabetTable();
 
 #endif
 
@@ -81,10 +89,20 @@ namespace VignereDeciphering
         static void ReleaseMain(string[] args)
         {
 
+            Console.WriteLine("(End text with * to use hard-coded alphabet matrix)");
+
             Console.Write("Text> ");
             string text;
 
             string input = Console.ReadLine().ToUpper().Replace(" ", "").ToUpper();
+
+            if (input[input.Length - 1] == '*')
+            {
+                
+                cipherType = CipherType.Custom;
+                input = input.Substring(0, input.Length - 1);
+
+            }
 
             if (input[0] == '\\')
             {
@@ -95,8 +113,10 @@ namespace VignereDeciphering
                 text = input;
             }
 
-            foreach (char c in text)
+            for (int i = 0; i < text.Length; i++)
             {
+
+                char c = text[i];
 
                 if (!validCharacters.Contains(c))
                 {
@@ -108,7 +128,7 @@ namespace VignereDeciphering
 
             int keyLengthSelection = KeyLengthSelection(text);
 
-            Console.Write("Automatically decipher text (0/1)?> ");
+            Console.Write("Automatically decipher text (1/0)?> ");
             bool autoDecipher = int.Parse(Console.ReadLine()) != 0;
 
             if (autoDecipher)
@@ -720,7 +740,23 @@ namespace VignereDeciphering
             Console.Write("Key Length> ");
             int keyLength = int.Parse(Console.ReadLine());
 
-            ManualMappingDeciphering.RunDeciphering(text, keyLength);
+            string _;
+            ManualMappingDeciphering.RunDeciphering(text, keyLength, out _);
+
+        }
+
+        static void DebugCustomAlphabetTable()
+        {
+
+            Console.Write("Row> ");
+            int row = int.Parse(Console.ReadLine());
+
+            Dictionary<char, char> mapping = ProgramMath.GetCharacterMappingByCustomAlphabetTable(row);
+
+            foreach (char inputChar in mapping.Keys)
+            {
+                Console.WriteLine($"{inputChar} -> {mapping[inputChar]}");
+            }
 
         }
 

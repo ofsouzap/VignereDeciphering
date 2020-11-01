@@ -58,6 +58,7 @@
   <ItemGroup>
     <Content Include="Code Book example multi-line.txt" />
     <Content Include="Code Book example one line.txt" />
+    <Content Include="CustomAlphabetTableGenerator.py" />
     <None Include="EnglishLetterFrequencies.dat" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

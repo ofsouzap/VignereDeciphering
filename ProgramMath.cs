@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace VignereDeciphering
@@ -172,6 +173,15 @@ namespace VignereDeciphering
 
         }
 
+        public static Dictionary<char, char> GetCharacterMappingByTableRow(int row)
+        {
+
+            if (Program.cipherType == Program.CipherType.Default) return GetCharacterMappingByCaesarCipherOffset((26 - row) % 26);
+            else if (Program.cipherType == Program.CipherType.Custom) return GetCharacterMappingByCustomAlphabetTable(row);
+            else return new Dictionary<char, char>();
+
+        }
+
         public static Dictionary<char, char> GetCharacterMappingByCaesarCipherOffset(int offset)
         {
 
@@ -182,6 +192,58 @@ namespace VignereDeciphering
 
                 char inputChar = (char)(i + 65);
                 char outputChar = (char)(((i + offset) % 26) + 65);
+
+                mapping[inputChar] = outputChar;
+
+            }
+
+            return mapping;
+
+        }
+
+        public static Dictionary<char, char> GetCharacterMappingByCustomAlphabetTable(int row)
+        {
+
+            //TODO: below was meant to be the encryption table but only works if provided the decryption table. Must fix
+
+            char[][] hardcodedTable = new char[][] {
+                new char[] {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'},
+                new char[] {'B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A'},
+                new char[] {'C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A','B'},
+                new char[] {'D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A','B','C'},
+                new char[] {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'},
+                new char[] {'B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A'},
+                new char[] {'C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A','B'},
+                new char[] {'D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A','B','C'},
+                new char[] {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'},
+                new char[] {'B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A'},
+                new char[] {'C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A','B'},
+                new char[] {'D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A','B','C'},
+                new char[] {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'},
+                new char[] {'B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A'},
+                new char[] {'C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A','B'},
+                new char[] {'D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A','B','C'},
+                new char[] {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'},
+                new char[] {'B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A'},
+                new char[] {'C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A','B'},
+                new char[] {'D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A','B','C'},
+                new char[] {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'},
+                new char[] {'B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A'},
+                new char[] {'C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A','B'},
+                new char[] {'D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A','B','C'},
+                new char[] {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'},
+                new char[] {'B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A'}
+            };
+
+            Debug.Assert(hardcodedTable.Length == Program.validCharacters.Length);
+
+            Dictionary<char, char> mapping = new Dictionary<char, char>();
+
+            for (int i = 0; i < 26; i++)
+            {
+
+                char inputChar = (char)(i + 65);
+                char outputChar = hardcodedTable[row][i];
 
                 mapping[inputChar] = outputChar;
 

@@ -135,7 +135,7 @@ namespace VignereDeciphering
 
                 /*Create Character Mapping*/
 
-                Dictionary<char, char> mapping = ProgramMath.GetCharacterMappingByCaesarCipherOffset((26 - i) % 26);
+                Dictionary<char, char> mapping = ProgramMath.GetCharacterMappingByTableRow(i);
 
                 /*Test character mapping*/
 

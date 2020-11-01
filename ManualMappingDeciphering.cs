@@ -94,7 +94,19 @@ namespace VignereDeciphering
                     int selectionId = int.Parse(parts[0]);
                     int shiftAmount = int.Parse(parts[1]);
 
-                    selectionShifts[selectionId] += shiftAmount;
+                    if (selectionId < 0
+                        || selectionId >= originalSelections.Length)
+                    {
+
+                        Console.WriteLine("Invalid selection id");
+
+                    }
+                    else
+                    {
+
+                        selectionShifts[selectionId] = (selectionShifts[selectionId] + shiftAmount + Program.validCharacters.Length) % Program.validCharacters.Length;
+
+                    }
 
                 }
                 else if (inputRequest == "SET OPTIMAL" || inputRequest == "SETOPTIMAL")

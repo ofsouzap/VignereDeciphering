@@ -177,7 +177,8 @@ namespace VignereDeciphering
             Console.Write("View how many top lengths?> ");
             int topLengthsCount = int.Parse(Console.ReadLine());
 
-            Dictionary<int, int> topLengths = ProgramMath.GetTopDictionaryKeysByValue(factoredWeightings, topLengthsCount);
+            int requestCount = topLengthsCount < factoredWeightings.Count ? topLengthsCount : factoredWeightings.Count;
+            Dictionary<int, int> topLengths = ProgramMath.GetTopDictionaryKeysByValue(factoredWeightings, requestCount);
 
             Console.WriteLine();
             Console.WriteLine("Top Key Lengths:");

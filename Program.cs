@@ -56,7 +56,7 @@ namespace VignereDeciphering
 
 #if debug
 
-            DebugManualMappingDeciphering();
+            DebugStringByOffset();
 
 #endif
 
@@ -181,12 +181,15 @@ namespace VignereDeciphering
             Dictionary<int, int> topLengths = ProgramMath.GetTopDictionaryKeysByValue(factoredWeightings, requestCount);
 
             Console.WriteLine();
+            Console.WriteLine("(English average IOC is about 0.0667)");
             Console.WriteLine("Top Key Lengths:");
 
             foreach (int length in topLengths.Keys)
             {
 
-                Console.WriteLine($"{length} (weighting = {topLengths[length]})");
+                decimal ioc = KeyLengthDeduction.GetAverageIOCOfTextByOffset(text, length);
+
+                Console.WriteLine($"{length} (weighting = {topLengths[length]}) - Average IOC = {ioc}");
 
             }
 
@@ -721,7 +724,28 @@ namespace VignereDeciphering
             Console.Write("Key Length> ");
             int keyLength = int.Parse(Console.ReadLine());
 
-            ManualMappingDeciphering.RunDeciphering(text, keyLength);
+            string _;
+            ManualMappingDeciphering.RunDeciphering(text, keyLength, out _);
+
+        }
+
+        static void DebugStringByOffset()
+        {
+
+            Console.WriteLine("Text:");
+            string text = Console.ReadLine();
+
+            Console.Write("Offset> ");
+            int offset = int.Parse(Console.ReadLine());
+
+            string[] texts = KeyLengthDeduction.GetTextsFromStringByOffset(text, offset);
+
+            foreach (string sampleText in texts)
+            {
+
+                Console.WriteLine(sampleText);
+
+            }
 
         }
 

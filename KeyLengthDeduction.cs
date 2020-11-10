@@ -115,6 +115,100 @@ namespace VignereDeciphering
 
         }
 
+        public static decimal GetAverageIOCOfTextByOffset(string text, int offset)
+        {
+
+            string[] texts = GetTextsFromStringByOffset(text, offset);
+
+            decimal[] iocs = CalculateIOCFromTexts(texts);
+
+            decimal total = 0;
+            foreach (decimal ioc in iocs) total += ioc;
+
+            return total / iocs.Length;
+
+        }
+
+        public static decimal[] CalculateIOCFromTexts(string[] texts)
+        {
+
+            decimal[] output = new decimal[texts.Length];
+
+            for (int i = 0; i < texts.Length; i++)
+            {
+
+                output[i] = CalculateIOC(texts[i]);
+
+            }
+
+            return output;
+
+        }
+
+        private static decimal CalculateIOC(string text) /*From IOCCalculator Project*/
+        {
+
+            Dictionary<char, int> charFrequencies = new Dictionary<char, int>();
+            int includedCharCount = 0;
+
+            foreach (char c in text)
+            {
+
+                if (!Program.validCharacters.Contains(c)) continue;
+
+                if (charFrequencies.ContainsKey(c)) charFrequencies[c]++;
+                else charFrequencies.Add(c, 1);
+
+                includedCharCount++;
+
+            }
+
+            decimal denominator = (includedCharCount - 1) * includedCharCount;
+
+            decimal total = 0;
+            foreach (char c in charFrequencies.Keys)
+            {
+
+                total += (decimal)((charFrequencies[c] - 1) * charFrequencies[c]) / denominator;
+
+            }
+
+            return total;
+
+        }
+
+        public static string[] GetTextsFromStringByOffset(string text, int offset)
+        {
+
+            string[] texts = new string[offset];
+
+            for (int i = 0; i < offset; i++)
+            {
+
+                texts[i] = GetTextFromStringByOffset(text.Substring(i), offset);
+
+            }
+
+            return texts;
+
+        }
+
+        private static string GetTextFromStringByOffset(string oldText, int offset)
+        {
+
+            string output = "";
+
+            for (int i = 0; oldText.Length > i; i += offset)
+            {
+
+                output = output + oldText[i];
+
+            }
+
+            return output;
+
+        }
+
     }
 
 }
